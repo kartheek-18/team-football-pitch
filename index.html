@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Team Football Pitch — Story Maps Hub</title>
+      <style>
+                * {
+                              margin: 0;
+                              padding: 0;
+                              box-sizing: border-box;
+                }
+
+                body {
+                              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                              min-height: 100vh;
+                              display: flex;
+                              flex-direction: column;
+                              align-items: center;
+                              justify-content: center;
+                              padding: 20px;
+                }
+
+                .container {
+                              max-width: 1200px;
+                              width: 100%;
+                }
+
+                .header {
+                              text-align: center;
+                              color: white;
+                              margin-bottom: 40px;
+                }
+
+                .header h1 {
+                              font-size: 3em;
+                              margin-bottom: 10px;
+                              text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                }
+
+                .header p {
+                              font-size: 1.2em;
+                              opacity: 0.95;
+                }
+
+                .pitch-container {
+                              background: linear-gradient(180deg, #2ecc71 0%, #27ae60 100%);
+                              border: 8px solid #fff;
+                              border-radius: 20px;
+                              padding: 30px;
+                              box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+                              position: relative;
+                              aspect-ratio: 1.4 / 1;
+                              max-width: 1000px;
+                              margin: 0 auto;
+                }
+
+                .pitch-lines {
+                              position: absolute;
+                              top: 0;
+                              left: 0;
+                              right: 0;
+                              bottom: 0;
+                              border-radius: 20px;
+                              border: 2px solid white;
+                              pointer-events: none;
+                }
+
+                .pitch-lines::before {
+                              content: '';
+                              position: absolute;
+                              top: 0;
+                              left: 50%;
+                              width: 2px;
+                              height: 100%;
+                              background: white;
+                              transform: translateX(-50%);
+                }
+
+                .pitch-lines::after {
+                              content: '';
+                              position: absolute;
+                              top: 50%;
+                              left: 0;
+                              width: 100%;
+                              height: 2px;
+                              background: white;
+                              transform: translateY(-50%);
+                }
+
+                .formation {
+                              position: relative;
+                              width: 100%;
+                              height: 100%;
+                              display: flex;
+                              flex-direction: column;
+                              justify-content: space-around;
+                              align-items: center;
+                              padding: 20px 0;
+                }
+
+                .row {
+                              display: flex;
+                              justify-content: center;
+                              gap: 30px;
+                              width: 100%;
+                              position: relative;
+                              z-index: 10;
+                }
+
+                .position-group {
+                              display: flex;
+                              flex-direction: column;
+                              align-items: center;
+                              gap: 15px;
+                }
+
+                .position-label {
+                              color: white;
+                              font-weight: bold;
+                              font-size: 0.9em;
+                              text-transform: uppercase;
+                              letter-spacing: 1px;
+                              text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+                }
+
+                .players {
+                              display: flex;
+                              gap: 12px;
+                              flex-wrap: wrap;
+                              justify-content: center;
+                }
+
+                .badge {
+                              width: 45px;
+                              height: 45px;
+                              border-radius: 50%;
+                              background: linear-gradient(135deg, #3498db, #2980b9);
+                              color: white;
+                              display: flex;
+                              align-items: center;
+                              justify-content: center;
+                              font-weight: bold;
+                              font-size: 0.85em;
+                              cursor: pointer;
+                              transition: all 0.3s ease;
+                              box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+                              border: 3px solid white;
+                              position: relative;
+                              overflow: hidden;
+                }
+
+                .badge:hover {
+                              transform: scale(1.15);
+                              box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+                              filter: brightness(1.2);
+                }
+
+                .badge::before {
+                              content: attr(data-title);
+                              position: absolute;
+                              bottom: -30px;
+                              left: 50%;
+                              transform: translateX(-50%);
+                              background: rgba(0,0,0,0.8);
+                              color: white;
+                              padding: 6px 12px;
+                              border-radius: 4px;
+                              font-size: 0.75em;
+                              white-space: nowrap;
+                              transition: bottom 0.3s ease;
+                              pointer-events: none;
+                              z-index: 100;
+                }
+
+                .badge:hover::before {
+                              bottom: -45px;
+                }
+
+                .forward { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+                .winger { background: linear-gradient(135deg, #f39c12, #e67e22); }
+                .midfielder { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+                .defender { background: linear-gradient(135deg, #1abc9c, #16a085); }
+                .goalkeeper { background: linear-gradient(135deg, #34495e, #2c3e50); }
+                .substitute { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
+
+                .instructions {
+                              color: white;
+                              text-align: center;
+                              margin-top: 30px;
+                              font-size: 0.95em;
+                              opacity: 0.9;
+                }
+
+                .toast {
+                              position: fixed;
+                              bottom: 20px;
+                              right: 20px;
+                              background: rgba(0,0,0,0.8);
+                              color: white;
+                              padding: 15px 25px;
+                              border-radius: 8px;
+                              animation: slideIn 0.3s ease, slideOut 0.3s ease 2.7s forwards;
+                              z-index: 1000;
+                              max-width: 300px;
+                }
+
+                @keyframes slideIn {
+                              from {
+                                                transform: translateX(400px);
+                                                opacity: 0;
+                              }
+                              to {
+                                                transform: translateX(0);
+                                                opacity: 1;
+                              }
+                }
+
+                @keyframes slideOut {
+                              from {
+                                                transform: translateX(0);
+                                                opacity: 1;
+                              }
+                              to {
+                                                transform: translateX(400px);
+                                                opacity: 0;
+                              }
+                }
+
+                @media (max-width: 768px) {
+                              .header h1 {
+                                                font-size: 1.8em;
+                              }
+                              .badge {
+                                                width: 38px;
+                                                height: 38px;
+                                                font-size: 0.75em;
+                              }
+                              .row {
+                                                gap: 15px;
+                              }
+                }
+            </style>
+  </head>
+  <body>
+        <div class="container">
+                  <div class="header">
+                                <h1>⚽ Team Football Pitch</h1>
+                              <p>Click any position to explore team stories</p>
+                  </div>div>
+        
+                <div class="pitch-container">
+                            <div class="pitch-lines"></div>div>
+                            <div class="formation">
+                                            <!-- GOALKEEPER -->
+                                            <div class="row">
+                                                                <div class="position-group">
+                                                                                        <div class="position-label">Goalkeeper</div>div>
+                                                                                        <div class="players">
+                                                                                                                    <div class="badge goalkeeper" data-title="Aditya Puri - Lead 3D/Raster Solutions Architect" data-position="goalkeeper" data-name="Aditya Puri">AP</div>div>
+                                                                                          </div>div>
+                                                                </div>div>
+                                            </div>div>
+                            
+                                            <!-- DEFENDERS -->
+                                            <div class="row">
+                                                                <div class="position-group">
+                                                                                        <div class="position-label">Defenders</div>div>
+                                                                                        <div class="players">
+                                                                                                                    <div class="badge defender" data-title="Barna Sarkar - Senior 3D & Python Solutions Consultant" data-position="defender" data-name="Barna Sarkar">BS</div>div>
+                                                                                                                    <div class="badge defender" data-title="Issita Dutt - RDBMS & Geodatabase Management" data-position="defender" data-name="Issita Dutt">ID</div>div>
+                                                                                                                    <div class="badge defender" data-title="Sukanya Chakraborty - Senior Raster Analysis Specialist" data-position="defender" data-name="Sukanya Chakraborty">SC</div>div>
+                                                                                          </div>div>
+                                                                </div>div>
+                                            </div>div>
+                            
+                                            <!-- MIDFIELDERS -->
+                                            <div class="row">
+                                                                <div class="position-group">
+                                                                                        <div class="position-label">Midfielders</div>div>
+                                                                                        <div class="players">
+                                                                                                                    <div class="badge midfielder" data-title="Ariyan Alam - Parcel Fabric & Arcade Solutions Engineer" data-position="midfielder" data-name="Ariyan Alam">AA</div>div>
+                                                                                                                    <div class="badge midfielder" data-title="Karthika JS - Senior ArcMap Migration & Network Analyst Specialist" data-position="midfielder" data-name="Karthika JS">KJ</div>div>
+                                                                                                                    <div class="badge midfielder" data-title="Riyanka Sengupta - 3D Visualization & GeoAI Specialist" data-position="midfielder" data-name="Riyanka Sengupta">RS</div>div>
+                                                                                                                    <div class="badge midfielder" data-title="Shweta Toppo - Principal Solutions Consultant (3D / BA / Python)" data-position="midfielder" data-name="Shweta Toppo">ST</div>div>
+                                                                                          </div>div>
+                                                                </div>div>
+                                            </div>div>
+                            
+                                            <!-- WINGERS & CENTER FORWARD -->
+                                            <div class="row">
+                                                                <div class="position-group">
+                                                                                        <div class="position-label">Wingers</div>div>
+                                                                                        <div class="players">
+                                                                                                                    <div class="badge winger" data-title="Jasmin Ara - Network Analyst & Business Analyst Consultant" data-position="winger" data-name="Jasmin Ara">JA</div>div>
+                                                                                                                    <div class="badge winger" data-title="Swapna Chawan - Network Analyst & Performance Troubleshooting Consultant" data-position="winger" data-name="Swapna Chawan">SwC</div>div>
+                                                                                          </div>div>
+                                                                </div>div>
+                                                                <div class="position-group">
+                                                                                        <div class="position-label">Forward</div>div>
+                                                                                        <div class="players">
+                                                                                                                    <div class="badge forward" data-title="Aditi Borkar - Center Forward - Senior Parcel Fabric & Geocoding Solutions Architect" data-position="forward" data-name="Aditi Borkar">AB</div>div>
+                                                                                          </div>div>
+                                                                </div>div>
+                                            </div>div>
+                            
+                                            <!-- SUBSTITUTES / BENCH -->
+                                            <div class="row">
+                                                                <div class="position-group">
+                                                                                        <div class="position-label">Bench (Substitutes)</div>div>
+                                                                                        <div class="players">
+                                                                                                                    <div class="badge substitute" data-title="Shivangi Singh - Geocoding & Performance Optimization Engineer" data-position="substitute" data-name="Shivangi Singh">ShS</div>div>
+                                                                                                                    <div class="badge substitute" data-title="Ubaid Dar - Cloud-Native Python & Arcade Developer" data-position="substitute" data-name="Ubaid Dar">UD</div>div>
+                                                                                                                    <div class="badge substitute" data-title="Allu Kartheek Reddy - Python & GeoAI Automation Engineer" data-position="substitute" data-name="Allu Kartheek Reddy">AKR</div>div>
+                                                                                                                    <div class="badge substitute" data-title="Joydeep Majhee - Associate GIS Solutions Consultant" data-position="substitute" data-name="Joydeep Majhee">JM</div>div>
+                                                                                                                    <div class="badge substitute" data-title="Saksham Sinha - Associate GIS Solutions Consultant" data-position="substitute" data-name="Saksham Sinha">SS</div>div>
+                                                                                                                    <div class="badge substitute" data-title="Gyansingh Nagi - Associate Business Analyst Consultant" data-position="substitute" data-name="Gyansingh Nagi">GN</div>div>
+                                                                                          </div>div>
+                                                                </div>div>
+                                            </div>div>
+                            </div>div>
+                </div>div>
+        
+                <div class="instructions">
+                            <p>📍 Each position links to dedicated story maps with team details, expertise areas, and projects</p>
+                </div>div>
+        </div>div>
+  
+      <script>
+                // StoryMaps links — update these with your published StoryMap URLs
+                const storyMapLinks = {
+                              forward: 'https://storymaps.arcgis.com/stories/YOUR_FORWARD_STORY_ID',
+                              winger: 'https://storymaps.arcgis.com/stories/YOUR_WINGER_STORY_ID',
+                              midfielder: 'https://storymaps.arcgis.com/stories/YOUR_MIDFIELDER_STORY_ID',
+                              defender: 'https://storymaps.arcgis.com/stories/YOUR_DEFENDER_STORY_ID',
+                              goalkeeper: 'https://storymaps.arcgis.com/stories/YOUR_GOALKEEPER_STORY_ID',
+                              substitute: 'https://storymaps.arcgis.com/stories/YOUR_SUBSTITUTE_STORY_ID'
+                };
+
+                const badges = document.querySelectorAll('.badge');
+
+                badges.forEach(badge => {
+                              badge.addEventListener('click', function() {
+                                                const position = this.dataset.position;
+                                                const name = this.dataset.name;
+                                                const url = storyMapLinks[position];
+
+                                                // Check if the link is still a placeholder
+                                                if (url.includes('YOUR_')) {
+                                                                      showToast(`📌 Story map for ${position} not yet published. Coming soon!`);
+                                                } else {
+                                                                      // Open the real StoryMap in a new tab
+                                                                      window.open(url, '_blank');
+                                                }
+                              });
+                });
+
+                function showToast(message) {
+                              const toast = document.createElement('div');
+                              toast.className = 'toast';
+                              toast.textContent = message;
+                              document.body.appendChild(toast);
+                              setTimeout(() => toast.remove(), 3000);
+                }
+      </script>
+  </body>
+</html>html>
+      </script></p></p></h1>
+  </body>
+      </style></title>
+  </head>
